@@ -1,0 +1,3 @@
+Execute
+groovy -cp ojdbc6.jar migration.groovy
+
