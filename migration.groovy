@@ -3,7 +3,7 @@
 // https://mvnrepository.com/artifact/org.apache.poi/poi
 // https://mvnrepository.com/artifact/org.codehaus.groovy.modules.scriptom/scriptom
 @Grapes([
-    @Grab(group='org.codehaus.groovy.modules.scriptom', module='scriptom', version='1.6.0')
+    //@Grab(group='org.codehaus.groovy.modules.scriptom', module='scriptom', version='1.6.0')
 ])
 //import com.zaxxer.hikari.HikariDataSource
 import groovy.sql.Sql
@@ -12,10 +12,6 @@ import java.sql.Driver
 //def sql = Sql.newInstance("jdbc:oracle:thin:@10.31.135.26:1521:DEVL8", "COMISIONLI", "COMISIONLI")
 def sql = Sql.newInstance("jdbc:oracle:thin:@10.31.135.26:1521:DEVL8", "baninst1", "u_pick_it")
 def results = sql.rows("select * from COMISIONLI.ADMIN_DE_COMISIONES ")
-sql.eachRow("select * from spriden where SPRIDEN_ID = ?",["M00222384"]) { row ->
-     println "${row.SPRIDEN_PIDM}"
- }
-
 def file = new File("comisiones.csv")
 def lines = file.readLines()
 List<Map> comisionesMap = []
@@ -69,8 +65,19 @@ println comisionesMap[4].PIDM
 
 File fileNew = new File("out_inserts.txt")
 
-comisionesMap.each{ comission ->
-    fileNew.write "INSERT INTO "COMISIONLI"."AUTORIZACION_COMISIONES" (ID, CAMPUS, FECHA_INICIAL, FECHA_FINAL, ID_PROMOTOR, NOMBRE_PROMOTOR, PUESTO, ID_ALUMNO, NOMBRE_ALUMNO, PAGO_INICIAL, TOTAL_DESCUENTOS, COMISION, PERIODO, FECHA_DE_PAGO, AUTORIZADO_DIRECTOR, DATE_CREATED, LAST_UPDATED, TIPO_PAGO, VALOR_CONTRATO_REAL, PIDM, COMMENTS, AD_PROMOTOR, AD_COORDINADOR, DISCOUNT_PERCENT, ID_COORDINADOR, USUARIO, NOMBRE_COORDINADOR, FECHA_AUTORIZADO, COMISION_COORDINADOR, USERNAME_MARKETING, STATUS_MARKETING, USERNAME_RECTOR, STATUS_RECTOR) VALUES ('298', 'cmx', TO_DATE('2020-01-21 13:55:58', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2020-01-21 13:56:01', 'YYYY-MM-DD HH24:MI:SS'), '33445', 'test', 'puesto', '3287328', 'alimno', '287', '3434', '344', '434', TO_DATE('2020-01-21 13:56:26', 'YYYY-MM-DD HH24:MI:SS'), 'y', TO_DATE('2020-01-21 13:56:34', 'YYYY-MM-DD HH24:MI:SS'), TO_DATE('2020-01-21 13:56:36', 'YYYY-MM-DD HH24:MI:SS'), '3', '2', '3223', '323', '3232', '3232', '3232', '323', 'dsd', 'nombre', TO_DATE('2020-01-21 13:57:00', 'YYYY-MM-DD HH24:MI:SS'), '1', '1', '1', '1', '1') \n"
+def checkNullOrText(value) {
+    if(!value){
+        value
+    }
+    else{
+        "'${value}'"
+    }
+}
+comisionesMap.each{ row ->
+    fileNew.append """INSERT INTO COMISIONLI.AUTORIZACION_COMISIONES
+    (ID, CAMPUS, FECHA_INICIAL, FECHA_FINAL, ID_PROMOTOR, NOMBRE_PROMOTOR, PUESTO, ID_ALUMNO, NOMBRE_ALUMNO, PAGO_INICIAL, TOTAL_DESCUENTOS, COMISION, PERIODO, FECHA_DE_PAGO, AUTORIZADO_DIRECTOR, DATE_CREATED, LAST_UPDATED, TIPO_PAGO, VALOR_CONTRATO_REAL, PIDM, COMMENTS, AD_PROMOTOR, AD_COORDINADOR, DISCOUNT_PERCENT, ID_COORDINADOR, USUARIO, NOMBRE_COORDINADOR, FECHA_AUTORIZADO, COMISION_COORDINADOR, USERNAME_MARKETING, STATUS_MARKETING, USERNAME_RECTOR, STATUS_RECTOR) 
+    VALUES 
+    (${checkNullOrText(row.ID)}, ${checkNullOrText(row.CAMPUS)}, ${checkNullOrText(row.FECHA_INICIAL)}, ${checkNullOrText(row.FECHA_FINAL)}, ${checkNullOrText(row.ID_PROMOTOR)}, ${checkNullOrText(row.NOMBRE_PROMOTOR)}, ${checkNullOrText(row.PUESTO)}, ${checkNullOrText(row.ID_ALUMNO)}, ${checkNullOrText(row.NOMBRE_ALUMNO)}, ${checkNullOrText(row.PAGO_INICIAL)}, ${checkNullOrText(row.TOTAL_DESCUENTOS)}, ${checkNullOrText(row.COMISION)}, ${checkNullOrText(row.PERIODO)}, ${checkNullOrText(row.FECHA_DE_PAGO)}, ${checkNullOrText(row.AUTORIZADO_DIRECTOR)}, ${checkNullOrText(row.DATE_CREATED)}, ${checkNullOrText(row.LAST_UPDATED)}, ${checkNullOrText(row.TIPO_PAGO)}, ${checkNullOrText(row.VALOR_CONTRATO_REAL)}, ${checkNullOrText(row.PIDM)}, ${checkNullOrText(row.COMMENTS)}, ${checkNullOrText(row.AD_PROMOTOR)}, ${checkNullOrText(row.AD_COORDINADOR)}, ${checkNullOrText(row.DISCOUNT_PERCENT)}, ${checkNullOrText(row.ID_COORDINADOR)}, ${checkNullOrText(row.USUARIO)}, ${checkNullOrText(row.NOMBRE_COORDINADOR)}, ${checkNullOrText(row.FECHA_AUTORIZADO)}, ${checkNullOrText(row.COMISION_COORDINADOR)}, ${checkNullOrText(row.USERNAME_MARKETING)}, 0, ${checkNullOrText(row.USERNAME_RECTOR)}, 0); \n"""
 }
 //def excelObj = new ActiveXObject('Excel.Application')
 
